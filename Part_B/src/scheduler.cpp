@@ -57,14 +57,32 @@ string header;
 }
 
 
+// Reset PCB fields so another scheduling algorithm can run 
 void resetProcesses(PCB* processes, int count) {
+    for (int i = 0; i < count; i++) {
+        processes[i].remaining = processes[i].burst;
+        processes[i].state = NEW;
+        processes[i].startTime = -1;
+        processes[i].completionTime = -1;
+    }
 }
-
+// check if all processes finished execution 
 bool allTerminated(PCB* processes, int count) {
+    for (int i = 0; i < count; i++) {
+        if (processes[i].state != TERMINATED) {
+            return false;
+        }
+    }
     return true;
 }
-
+// Move newly arrived processes from new to ready 
 void admitArrivals(PCB* processes, int count, int currentTime, ReadyQueue& ready) {
+    for (int i = 0; i < count; i++) {
+        if (processes[i].state == NEW && processes[i].arrival == currentTime) {
+            processes[i].state = READY;
+            ready.enqueue(&processes[i]);
+        }
+    }
 }
 
 void printTrace(ofstream& out, int currentTime, PCB* running, const ReadyQueue& ready) {
