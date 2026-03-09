@@ -11,9 +11,9 @@ int main() {
         return 1;
     }
 
-    simulateFCFS(processes, count, "output_fcfs.txt");
+    simulatePriority(processes, count, "output_priority.txt");
 
-    cout << "FCFS simulation complete. Check output_fcfs.txt" << endl;
+    cout << "Check output_priority.txt" << endl;
 
     delete[] processes;
     return 0;
