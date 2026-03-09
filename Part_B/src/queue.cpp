@@ -151,3 +151,24 @@ PCB* ReadyQueue::rmHighestPriority() {
     delete best;
     return p;
 }
+
+// printQueue(): prints all processes waiting in the ready queue
+
+void ReadyQueue::printQueue(ofstream& out) const {
+
+    Node* curr = front;
+    while (curr != nullptr) {
+
+        PCB* p = curr->process;
+
+        out << "PID=" << p->pid
+            << " Arr=" << p->arrival
+            << " Burst=" << p->burst
+            << " Rem=" << p->remaining
+            << " Prio=" << p->priority
+            << " State=" << stateToString(p->state)
+            << endl;
+
+        curr = curr->next;
+    }
+}
