@@ -202,7 +202,7 @@ void simulatePriority(PCB* processes, int count, const string& outputFile) {
     while (!allTerminated(processes, count)) {
         admitArrivals(processes, count, currentTime, ready);
         if (running == nullptr && !ready.isEmpty()) {
-            running = ready.removeHighestPriority();
+            running = ready.rmHighestPriority();
             running->state = RUNNING;
 
             if (running->startTime == -1) {
