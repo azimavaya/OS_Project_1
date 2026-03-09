@@ -3,3 +3,11 @@
 
 #include <string>
 using namespace std;
+
+enum State {
+    NEW,
+    READY,
+    RUNNING,
+    TERMINATED
+};
+
