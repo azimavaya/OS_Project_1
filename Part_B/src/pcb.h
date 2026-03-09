@@ -21,3 +21,7 @@ struct PCB {
     int startTime;
     int completionTime;
 };
+
+string stateToString(State s);
+
+#endif
