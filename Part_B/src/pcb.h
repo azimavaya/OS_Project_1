@@ -11,3 +11,13 @@ enum State {
     TERMINATED
 };
 
+struct PCB {
+    string pid;
+    int arrival;
+    int burst;
+    int remaining;
+    int priority;
+    State state;
+    int startTime;
+    int completionTime;
+};
