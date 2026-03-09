@@ -107,7 +107,56 @@ void printTrace(ofstream& out, int currentTime, PCB* running, const ReadyQueue& 
     out << endl;
 }
 
+// first come first serve scheduling 
 void simulateFCFS(PCB* processes, int count, const string& outputFile) {
+    ofstream out(outputFile);
+
+    if (!out.is_open()) {
+        cout << "Error: could not open the file " << outputFile << endl;
+        return;
+    }
+
+    ReadyQueue ready;
+    PCB* running = nullptr;
+    int currentTime = 0;
+
+    out << "FCFS Scheduling Trace" << endl << endl;
+
+    while (!allTerminated(processes, count)) {
+        // admit newly arrived processes
+        admitArrivals(processes, count, currentTime, ready);
+
+        // if CPU is idle select next process from ready queue
+        if (running == nullptr && !ready.isEmpty()) {
+            running = ready.dequeue();
+            running->state = RUNNING;
+
+            if (running->startTime == -1) {
+                running->startTime = currentTime;
+            }
+        }
+
+        // run the current process for one time unit
+        if (running != nullptr) {
+            running->remaining--;
+        }
+
+        // print trace for this time unit
+        printTrace(out, currentTime, running, ready);
+
+        // if process finished terminate it
+        if (running != nullptr && running->remaining == 0) {
+            running->completionTime = currentTime + 1;
+            running->state = TERMINATED;
+            running = nullptr;
+        }
+
+        currentTime++;
+    }
+
+    out << "Gantt Chart:" << endl;
+
+    out.close();
 }
 
 void simulatePriority(PCB* processes, int count, const string& outputFile) {
