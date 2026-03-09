@@ -107,26 +107,45 @@ void printTrace(ofstream& out, int currentTime, PCB* running, const ReadyQueue& 
     out << endl;
 }
 
+// Print a Gantt chart 
+void printGanttChart(ofstream& out, string gantt[], int length) {
+    out << "Gantt Chart:" << endl;
+
+    for (int i = 0; i < length; i++) {
+        out << "| " << gantt[i] << " ";
+    }
+    out << "|" << endl;
+
+    for (int i = 0; i <= length; i++) {
+        out << i;
+        if (i < 10) {
+            out << "     ";
+        } else {
+            out << "    ";
+        }
+    }
+    out << endl;
+}
 // first come first serve scheduling 
 void simulateFCFS(PCB* processes, int count, const string& outputFile) {
     ofstream out(outputFile);
 
     if (!out.is_open()) {
-        cout << "Error: could not open the file " << outputFile << endl;
+        cout << "Error: could not open file " << outputFile << endl;
         return;
     }
 
     ReadyQueue ready;
     PCB* running = nullptr;
     int currentTime = 0;
+    string* gantt = new string[1000];
+    int ganttLength = 0;
 
     out << "FCFS Scheduling Trace" << endl << endl;
 
     while (!allTerminated(processes, count)) {
-        // admit newly arrived processes
         admitArrivals(processes, count, currentTime, ready);
 
-        // if CPU is idle select next process from ready queue
         if (running == nullptr && !ready.isEmpty()) {
             running = ready.dequeue();
             running->state = RUNNING;
@@ -136,15 +155,16 @@ void simulateFCFS(PCB* processes, int count, const string& outputFile) {
             }
         }
 
-        // run the current process for one time unit
         if (running != nullptr) {
             running->remaining--;
+            gantt[ganttLength] = running->pid;
+        } else {
+            gantt[ganttLength] = "IDLE";
         }
+        ganttLength++;
 
-        // print trace for this time unit
         printTrace(out, currentTime, running, ready);
 
-        // if process finished terminate it
         if (running != nullptr && running->remaining == 0) {
             running->completionTime = currentTime + 1;
             running->state = TERMINATED;
@@ -154,8 +174,10 @@ void simulateFCFS(PCB* processes, int count, const string& outputFile) {
         currentTime++;
     }
 
-    out << "Gantt Chart:" << endl;
+    out << endl;
+    printGanttChart(out, gantt, ganttLength);
 
+    delete[] gantt;
     out.close();
 }
 
