@@ -37,3 +37,34 @@ void ReadyQueue::enqueue(PCB* p) {
         rear = newNode;
     }
 }
+
+
+// dequeue(): removes the process at the front of the queue
+
+PCB* ReadyQueue::dequeue() {
+
+    if (isEmpty())
+        return nullptr;
+
+    Node* temp = front;
+    PCB* p = temp->process;
+    front = front->next;
+
+    if (front == nullptr)
+        rear = nullptr;
+
+    delete temp;
+    return p;
+}
+
+
+//peekFront(): rturns the process at the front without removing it
+
+PCB* ReadyQueue::peekFront() const {
+
+    if (isEmpty())
+        return nullptr;
+
+    return front->process;
+}
+
