@@ -85,7 +85,26 @@ void admitArrivals(PCB* processes, int count, int currentTime, ReadyQueue& ready
     }
 }
 
+// Print system state  
 void printTrace(ofstream& out, int currentTime, PCB* running, const ReadyQueue& ready) {
+    out << "Time " << currentTime << ":" << endl;
+    out << "RUNNING:" << endl;
+
+    if (running == nullptr) {
+        out << "IDLE" << endl;
+    } else {
+        out << "PID=" << running->pid
+            << " Arr=" << running->arrival
+            << " Burst=" << running->burst
+            << " Rem=" << running->remaining
+            << " Prio=" << running->priority
+            << " State=" << stateToString(running->state)
+            << endl;
+    }
+
+    out << "READY:" << endl;
+    ready.printQueue(out);
+    out << endl;
 }
 
 void simulateFCFS(PCB* processes, int count, const string& outputFile) {
