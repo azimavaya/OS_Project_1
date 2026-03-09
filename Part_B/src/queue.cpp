@@ -108,3 +108,46 @@ PCB* ReadyQueue::rmShortestRemain() {
     delete best;
     return p;
 }
+
+//rmHighestPriority(): used for Priority scheduling
+
+PCB* ReadyQueue::rmHighestPriority() {
+
+    if (isEmpty())
+        return nullptr;
+
+    Node* curr = front;
+    Node* prev = nullptr;
+    Node* best = front;
+    Node* bestPrev = nullptr;
+
+    while (curr != nullptr) {
+
+        if (curr->process->priority < best->process->priority) {
+            best = curr;
+            bestPrev = prev;
+        }
+
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (bestPrev == nullptr) {
+
+        front = front->next;
+
+        if (front == nullptr)
+            rear = nullptr;
+    }
+    else {
+
+        bestPrev->next = best->next;
+
+        if (best == rear)
+            rear = bestPrev;
+    }
+
+    PCB* p = best->process;
+    delete best;
+    return p;
+}
