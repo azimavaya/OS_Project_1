@@ -152,6 +152,25 @@ PCB* ReadyQueue::rmHighestPriority() {
     return p;
 }
 
+// Return the ready process with the smallest remaining time without removing it 
+PCB* ReadyQueue::peekShortestRemain() const {
+    if (isEmpty()) {
+        return nullptr;
+    }
+
+    Node* curr = front;
+    PCB* shortest = front->process;
+
+    while (curr != nullptr) {
+        if (curr->process->remaining < shortest->remaining) {
+            shortest = curr->process;
+        }
+        curr = curr->next;
+    }
+
+    return shortest;
+}
+
 // printQueue(): prints all processes waiting in the ready queue
 
 void ReadyQueue::printQueue(ofstream& out) const {
