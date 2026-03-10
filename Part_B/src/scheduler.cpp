@@ -310,5 +310,70 @@ void simulateSRTF(PCB* processes, int count, const string& outputFile) {
     out.close();
 }
 
+// Round Robin scheduling 
 void simulateRR(PCB* processes, int count, const string& outputFile, int quantum) {
+    ofstream out(outputFile);
+
+    if (!out.is_open()) {
+        cout << "Error: could not open file " << outputFile << endl;
+        return;
+    }
+
+    ReadyQueue ready;
+    PCB* running = nullptr;
+    int currentTime = 0;
+    int timeSlice = 0;
+
+    string* gantt = new string[1000];
+    int ganttLength = 0;
+
+    out << "Round Robin Scheduling Trace" << endl;
+    out << "Quantum = " << quantum << endl << endl;
+
+    while (!allTerminated(processes, count)) {
+        admitArrivals(processes, count, currentTime, ready);
+
+        if (running == nullptr && !ready.isEmpty()) {
+            running = ready.dequeue();
+            running->state = RUNNING;
+            timeSlice = 0;
+
+            if (running->startTime == -1) {
+                running->startTime = currentTime;
+            }
+        }
+
+        if (running != nullptr) {
+            running->remaining--;
+            timeSlice++;
+            gantt[ganttLength] = running->pid;
+        } else {
+            gantt[ganttLength] = "IDLE";
+        }
+        ganttLength++;
+
+        printTrace(out, currentTime, running, ready);
+
+        if (running != nullptr && running->remaining == 0) {
+            running->completionTime = currentTime + 1;
+            running->state = TERMINATED;
+            running = nullptr;
+            timeSlice = 0;
+        }
+
+        else if (running != nullptr && timeSlice == quantum) {
+            running->state = READY;
+            ready.enqueue(running);
+            running = nullptr;
+            timeSlice = 0;
+        }
+
+        currentTime++;
+    }
+
+    out << endl;
+    printGanttChart(out, gantt, ganttLength);
+
+    delete[] gantt;
+    out.close();
 }
