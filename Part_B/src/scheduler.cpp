@@ -234,7 +234,80 @@ void simulatePriority(PCB* processes, int count, const string& outputFile) {
     out.close();
 }
 
+//  Shortest Remaining Time First scheduling 
 void simulateSRTF(PCB* processes, int count, const string& outputFile) {
+    ofstream out(outputFile);
+
+    if (!out.is_open()) {
+        cout << "Error: could not open file " << outputFile << endl;
+        return;
+    }
+
+    ReadyQueue ready;
+    PCB* running = nullptr;
+    int currentTime = 0;
+
+    string* gantt = new string[1000];
+    int ganttLength = 0;
+
+    out << "SRTF Scheduling Trace" << endl << endl;
+
+    while (!allTerminated(processes, count)) {
+        admitArrivals(processes, count, currentTime, ready);
+
+        
+        if (running == nullptr && !ready.isEmpty()) {
+            running = ready.rmShortestRemain();
+            running->state = RUNNING;
+
+            if (running->startTime == -1) {
+                running->startTime = currentTime;
+            }
+        }
+
+        else if (running != nullptr && !ready.isEmpty()) {
+            PCB* shortestReady = ready.peekShortestRemain();
+
+            if (shortestReady != nullptr &&
+                shortestReady->remaining < running->remaining) {
+
+                running->state = READY;
+                ready.enqueue(running);
+
+                running = ready.rmShortestRemain();
+                running->state = RUNNING;
+
+                if (running->startTime == -1) {
+                    running->startTime = currentTime;
+                }
+            }
+        }
+
+
+        if (running != nullptr) {
+            running->remaining--;
+            gantt[ganttLength] = running->pid;
+        } else {
+            gantt[ganttLength] = "IDLE";
+        }
+        ganttLength++;
+
+        printTrace(out, currentTime, running, ready);
+
+        if (running != nullptr && running->remaining == 0) {
+            running->completionTime = currentTime + 1;
+            running->state = TERMINATED;
+            running = nullptr;
+        }
+
+        currentTime++;
+    }
+
+    out << endl;
+    printGanttChart(out, gantt, ganttLength);
+
+    delete[] gantt;
+    out.close();
 }
 
 void simulateRR(PCB* processes, int count, const string& outputFile, int quantum) {
