@@ -11,9 +11,9 @@ int main() {
         return 1;
     }
 
-    simulatePriority(processes, count, "output_priority.txt");
+    simulateSRTF(processes, count, "output_srtf.txt");
 
-    cout << "Check output_priority.txt" << endl;
+    cout << "SRTF simulation complete. Check output_srtf.txt" << endl;
 
     delete[] processes;
     return 0;
