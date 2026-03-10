@@ -11,9 +11,23 @@ int main() {
         return 1;
     }
 
+    simulateFCFS(processes, count, "output_fcfs.txt");
+
+    resetProcesses(processes, count);
+    simulatePriority(processes, count, "output_priority.txt");
+
+    resetProcesses(processes, count);
+    simulateSRTF(processes, count, "output_srtf.txt");
+
+    resetProcesses(processes, count);
     simulateRR(processes, count, "output_rr.txt", 2);
 
-    cout << "RR simulation complete. Check output_rr.txt" << endl;
+    cout << "All scheduling simulations completed." << endl;
+    cout << "Generated files:" << endl;
+    cout << "  output_fcfs.txt" << endl;
+    cout << "  output_priority.txt" << endl;
+    cout << "  output_srtf.txt" << endl;
+    cout << "  output_rr.txt" << endl;
 
     delete[] processes;
     return 0;
