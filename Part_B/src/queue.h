@@ -24,6 +24,7 @@ public:
     PCB* peekFront() const;
     PCB* rmShortestRemain();
     PCB* rmHighestPriority();
+    PCB* peekShortestRemain() const;
     void printQueue(ofstream& out) const;
 };
 
