@@ -11,9 +11,9 @@ int main() {
         return 1;
     }
 
-    simulateSRTF(processes, count, "output_srtf.txt");
+    simulateRR(processes, count, "output_rr.txt", 2);
 
-    cout << "SRTF simulation complete. Check output_srtf.txt" << endl;
+    cout << "RR simulation complete. Check output_rr.txt" << endl;
 
     delete[] processes;
     return 0;
